@@ -17,6 +17,8 @@ import InvoiceHistorySection from '../components/InvoiceHistorySection';
 import TaxCalculatorResidencyPanel from '../components/TaxCalculatorResidencyPanel';
 import SmartCategorizeToolbar from '../components/SmartCategorizeToolbar';
 import StockholdersPanel from '../components/StockholdersPanel';
+import EmailNotificationsPanel from '../components/EmailNotificationsPanel';
+import WebNotificationsPanel from '../components/WebNotificationsPanel';
 
 export default function PluginPage() {
   const { pluginId = '' } = useParams();
@@ -92,7 +94,13 @@ export default function PluginPage() {
     <div
       className={[
         'space-y-8',
-        pluginId === 'invoice_gen' ? 'max-w-4xl' : pluginId === 'stockholders' ? 'max-w-5xl' : 'max-w-3xl',
+        pluginId === 'invoice_gen'
+          ? 'max-w-4xl'
+          : pluginId === 'stockholders'
+            ? 'max-w-5xl'
+            : pluginId === 'email_notifications' || pluginId === 'web_notifications'
+              ? 'max-w-4xl'
+              : 'max-w-3xl',
       ].join(' ')}
     >
       <header>
@@ -121,6 +129,10 @@ export default function PluginPage() {
       )}
 
       {pluginId === 'stockholders' && <StockholdersPanel />}
+
+      {pluginId === 'email_notifications' && <EmailNotificationsPanel />}
+
+      {pluginId === 'web_notifications' && <WebNotificationsPanel />}
 
       {pluginId === 'invoice_gen' && (
         <div className="space-y-8">
@@ -232,7 +244,7 @@ export default function PluginPage() {
         </section>
       )}
 
-      {!['tax_calculator', 'invoice_gen', 'expense_categorizer', 'ai_prediction', 'stockholders'].includes(
+      {!['tax_calculator', 'invoice_gen', 'expense_categorizer', 'ai_prediction', 'stockholders', 'email_notifications', 'web_notifications'].includes(
         pluginId
       ) && (
         <section className="card p-6 text-ink-black/80 text-sm">
