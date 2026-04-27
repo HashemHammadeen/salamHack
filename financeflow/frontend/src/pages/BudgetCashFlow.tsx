@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { Pencil, Plus, Trash2, Wallet, Shield } from 'lucide-react';
 import type {
@@ -136,24 +136,24 @@ export default function BudgetCashFlow() {
           sub="Income minus all expenses (this month + recurring)"
           accent="border-t-4 border-t-[#2d6a4f]"
         />
-        <div
-          className="card p-5 md:p-6 flex flex-col justify-between min-h-[140px] border-2 border-ink-black/20 relative overflow-hidden"
-          role="status"
-        >
-          <div className="absolute right-3 top-3 text-ink-black/20">
-            <Shield size={28} strokeWidth={1.25} aria-hidden />
-          </div>
-          <p className="text-xs font-bold tracking-widest uppercase text-ink-black/50">Safe to spend</p>
-          <p className="text-2xl md:text-3xl font-medium tracking-tight text-ink-black mt-1 tabular-nums">
-            {money(safeToSpend)}
-          </p>
-          <p className="text-sm text-ink-black/60 mt-2">
-            After recurring &amp; this month’s entries, minus{' '}
-            <span className="font-medium text-ink-black">{money(upcomingBills)}</span> in bills due in the
-            next {UPCOMING_DAYS} days
-            {upcomingItems.length > 0 ? ` (${upcomingItems.length} bill${upcomingItems.length > 1 ? 's' : ''})` : ''}.
-          </p>
-        </div>
+        <SummaryCard
+          label="Safe to spend"
+          value={safeToSpend}
+          accent="border-t-4 border-t-[#1a659e]"
+          icon={<Shield size={20} className="text-ink-black/25 shrink-0" aria-hidden />}
+          statusRole
+          sub={
+            <>
+              After recurring &amp; this month’s entries, minus{' '}
+              <span className="font-medium text-ink-black">{money(upcomingBills)}</span> in bills due in the
+              next {UPCOMING_DAYS} days
+              {upcomingItems.length > 0
+                ? ` (${upcomingItems.length} bill${upcomingItems.length > 1 ? 's' : ''})`
+                : ''}
+              .
+            </>
+          }
+        />
       </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -256,22 +256,27 @@ function SummaryCard({
   value,
   sub,
   accent,
+  icon,
+  statusRole,
 }: {
   label: string;
   value: number;
-  sub?: string;
+  sub?: string | ReactNode;
   accent: string;
+  icon?: ReactNode;
+  /** e.g. live region for safe-to-spend */
+  statusRole?: boolean;
 }) {
   return (
-    <div className={`card p-5 md:p-6 ${accent}`}>
+    <div className={`card p-5 md:p-6 ${accent}`} role={statusRole ? 'status' : undefined}>
       <div className="flex items-start justify-between gap-2">
         <p className="text-xs font-bold tracking-widest uppercase text-ink-black/50">{label}</p>
-        <Wallet size={20} className="text-ink-black/25 shrink-0" aria-hidden />
+        {icon ?? <Wallet size={20} className="text-ink-black/25 shrink-0" aria-hidden />}
       </div>
       <p className="text-2xl md:text-3xl font-medium tracking-tight mt-2 tabular-nums text-ink-black">
         {money(value)}
       </p>
-      {sub && <p className="text-sm text-ink-black/55 mt-2">{sub}</p>}
+      {sub != null && sub !== '' && <p className="text-sm text-ink-black/55 mt-2">{sub}</p>}
     </div>
   );
 }
