@@ -124,37 +124,33 @@ export default function InvoiceDocumentForm({ idPrefix, value, onChange, compact
             </div>
             <p className="text-xs text-ink-black/40 mt-1.5">Sequential id (e.g. INV-2026-001). Use next assigns from your tenant counter.</p>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label
-                htmlFor={`${idPrefix}-issue`}
-                className="text-xs font-bold tracking-widest uppercase text-ink-black/45 block mb-1.5"
-              >
-                Issue date
-              </label>
-              <input
-                id={`${idPrefix}-issue`}
-                type="date"
-                value={value.issueDate}
-                onChange={(e) => setDoc({ issueDate: e.target.value })}
-                className="w-full bg-white/80 border-2 border-ink-black/15 rounded-2xl px-3 py-2.5 text-sm outline-none focus:border-ink-black"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor={`${idPrefix}-due`}
-                className="text-xs font-bold tracking-widest uppercase text-ink-black/45 block mb-1.5"
-              >
-                Due date
-              </label>
-              <input
-                id={`${idPrefix}-due`}
-                type="date"
-                value={value.dueDate}
-                onChange={(e) => setDoc({ dueDate: e.target.value })}
-                className="w-full bg-white/80 border-2 border-ink-black/15 rounded-2xl px-3 py-2.5 text-sm outline-none focus:border-ink-black"
-              />
-            </div>
+          <div>
+            <label
+              htmlFor={`${idPrefix}-issue`}
+              className="text-xs font-bold tracking-widest uppercase text-ink-black/45 block mb-1.5"
+            >
+              Issue date
+            </label>
+            <input
+              id={`${idPrefix}-issue`}
+              type="date"
+              value={value.issueDate}
+              onChange={(e) => {
+                const issueDate = e.target.value;
+                if (!issueDate) {
+                  setDoc({ issueDate });
+                  return;
+                }
+                const due = new Date(`${issueDate}T12:00:00`);
+                if (Number.isNaN(due.getTime())) {
+                  setDoc({ issueDate });
+                  return;
+                }
+                due.setDate(due.getDate() + 30);
+                setDoc({ issueDate, dueDate: due.toISOString().slice(0, 10) });
+              }}
+              className="w-full bg-white/80 border-2 border-ink-black/15 rounded-2xl px-3 py-2.5 text-sm outline-none focus:border-ink-black"
+            />
           </div>
         </div>
       </div>
