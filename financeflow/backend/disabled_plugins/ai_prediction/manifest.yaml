@@ -1,0 +1,3 @@
+name: "AI Prediction"
+description: "Projects the next 3 months of cash flow based on existing transaction trends."
+version: "1.0.0"

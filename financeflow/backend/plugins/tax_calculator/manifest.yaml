@@ -1,0 +1,3 @@
+name: "Tax Calculator"
+description: "Estimates tax reserves based on income."
+version: "1.0.0"
