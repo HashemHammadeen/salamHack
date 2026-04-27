@@ -1,4 +1,4 @@
-import { Puzzle, CheckCircle2, Download, Search, BookOpen, FileCode2 } from 'lucide-react';
+import { Puzzle, CheckCircle2, Download, Search, BookOpen, FileCode2, RefreshCw } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useFinanceData } from '../context/FinanceDataContext';
@@ -83,13 +83,6 @@ export default function Marketplace() {
             Add your plugin
           </button>
         </div>
-        <button
-          type="button"
-          onClick={() => void refresh()}
-          className="mt-4 text-sm font-medium text-signal-orange underline underline-offset-2"
-        >
-          Refresh plugin list
-        </button>
       </section>
 
       {addPluginOpen && (
@@ -102,11 +95,20 @@ export default function Marketplace() {
       {allPlugins.length > 0 && (
         <section>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-signal-orange" />
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-signal-orange shrink-0" />
               <h2 className="text-sm font-bold tracking-widest uppercase text-ink-black/60">
                 All plugins
               </h2>
+              <button
+                type="button"
+                onClick={() => void refresh()}
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink-black/20 text-ink-black/70 hover:bg-ink-black/[0.05] hover:text-ink-black transition-colors"
+                aria-label="Refresh plugin list"
+                title="Refresh plugin list"
+              >
+                <RefreshCw size={18} strokeWidth={1.75} aria-hidden />
+              </button>
               <span className="text-sm text-ink-black/50 tabular-nums" aria-live="polite">
                 {filteredPlugins.length === allPlugins.length
                   ? `${allPlugins.length} ${
