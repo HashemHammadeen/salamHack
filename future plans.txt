@@ -1,0 +1,4 @@
+1-make pagination in transactions
+2- change the name of the plugin expense categrozation to smart categrization
+3-i want you to hard code a list of categorization for every thing in the app (client, suppliers, expenses,etc..) and make a drop down where the user can select the categories manual if he is not activating the plugin but if the user activiate the ai will categorize them based on the data (i want to use gemma) (the way of sending the data is the data loaded in the screen will be sent all at once to gemma as json then the response will json with each client, supplier,etc cattegorie)(any new categori that is not listed in out list the ai use you should add it to the list automaticly)
+4-hard code a some multitent user with profile page where the user can see his data and configre them

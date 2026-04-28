@@ -1,0 +1,3 @@
+name: "Email notifications"
+description: "Send alerts and tests through SMTP—save host, port, and credentials per tenant in the app, or use FF_SMTP_* on the API host."
+version: "1.0.1"

@@ -1,0 +1,2 @@
+# Per-tenant SMTP settings (may contain secrets)
+smtp_settings.json

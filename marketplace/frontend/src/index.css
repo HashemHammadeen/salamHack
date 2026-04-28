@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@theme {
+  --color-canvas-cream: #F3F0EE;
+  --color-lifted-cream: #FCFBFA;
+  --color-ink-black: #141413;
+  --color-signal-orange: #CF4500;
+  --color-light-orange: #F37338;
+}
+
+@layer base {
+  body {
+    background-color: var(--color-canvas-cream);
+    color: var(--color-ink-black);
+    font-family: 'Inter', 'Sofia Sans', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    font-weight: 450;
+  }
+  
+  h1, h2, h3 {
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+}
+
+.pill-button {
+  background-color: var(--color-ink-black);
+  color: var(--color-canvas-cream);
+  border: 1.5px solid var(--color-ink-black);
+  border-radius: 20px;
+  padding: 6px 24px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  font-size: 16px;
+  transition: transform 0.1s ease-in-out;
+}
+
+.pill-button:active {
+  transform: scale(0.96);
+}
+
+.pill-button-secondary {
+  background-color: #FFFFFF;
+  color: var(--color-ink-black);
+  border: 1.5px solid var(--color-ink-black);
+  border-radius: 20px;
+  padding: 6px 24px;
+  font-weight: 450;
+  font-size: 16px;
+  transition: transform 0.1s ease-in-out;
+}
+
+.pill-button-secondary:active {
+  transform: scale(0.96);
+}
+
+.price-pill {
+  background-color: var(--color-signal-orange);
+  color: #FFFFFF;
+  border-radius: 24px;
+  padding: 1px 30px;
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.13px;
+  display: inline-block;
+}
+
+.ghost-text {
+  color: #E8E2DA;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  position: absolute;
+  z-index: -10;
+  white-space: nowrap;
+  pointer-events: none;
+}

@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;450;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-canvas-cream: #F3F0EE;
+  --color-lifted-cream: #FCFBFA;
+  --color-ink-black: #141413;
+  --color-signal-orange: #CF4500;
+  --color-light-signal-orange: #F37338;
+}
+
+:root {
+  --canvas-cream: #F3F0EE;
+  --lifted-cream: #FCFBFA;
+  --ink-black: #141413;
+  --signal-orange: #CF4500;
+  --light-signal-orange: #F37338;
+}
+
+body {
+  background-color: var(--canvas-cream);
+  color: var(--ink-black);
+  font-family: 'Sofia Sans', Arial, sans-serif;
+  font-weight: 450;
+}
+
+h1, h2, h3 {
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+h1 {
+  font-size: 64px;
+  line-height: 1;
+}
+
+h2 {
+  font-size: 36px;
+  line-height: 44px;
+}
+
+h3 {
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+.pill-button {
+  background-color: var(--ink-black);
+  color: var(--canvas-cream);
+  border: 1.5px solid var(--ink-black);
+  border-radius: 20px;
+  padding: 6px 24px;
+  font-weight: 500;
+  letter-spacing: -0.32px;
+  transition: transform 0.1s;
+}
+
+.pill-button:active {
+  transform: scale(0.98);
+}
+
+.pill-button-secondary {
+  background-color: #FFFFFF;
+  color: var(--ink-black);
+  border: 1.5px solid var(--ink-black);
+  border-radius: 20px;
+  padding: 6px 24px;
+  font-weight: 450;
+  transition: transform 0.1s;
+}
+
+.pill-button-secondary:active {
+  transform: scale(0.98);
+}
+
+.consent-button {
+  background-color: var(--signal-orange);
+  color: #FFFFFF;
+  border-radius: 24px;
+  padding: 1px 30px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.13px;
+}
+
+.card {
+  background-color: var(--lifted-cream);
+  border-radius: 40px;
+  padding: 32px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 24px 48px 0px;
+}
+
+.circle-portrait {
+  border-radius: 50%;
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+}
+
+.nav-pill {
+  background-color: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  border-radius: 999px;
+  padding: 16px 40px;
+  box-shadow: rgba(0, 0, 0, 0.04) 0px 4px 24px 0px;
+}
