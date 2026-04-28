@@ -76,7 +76,7 @@ export default function WebNotificationsPanel() {
       return;
     }
     try {
-      const n = new Notification('FinanceFlow', {
+      const n = new Notification('Piecemint', {
         body: 'Test — you will see alerts like this for account activity when wired up.',
         tag: 'ff-test',
       });

@@ -1,11 +1,11 @@
-# FinanceFlow documentation mirror
+# Piecemint documentation mirror
 
-This folder mirrors the `financeflow/` project tree. For each **source file** in the repo, a documentation file here explains that file’s role.
+This folder mirrors the `piecemint/` project tree. For each **source file** in the repo, a documentation file here explains that file’s role.
 
 ## Naming
 
 - Doc files are named **`<original-filename>.md`** (for example `main.py.md`, `Dashboard.tsx.md`) so names stay unique in folders that contain both `App.css` and `App.tsx`.
-- **Exception:** `README.md` in this tree documents the corresponding `README.md` under `financeflow/`.
+- **Exception:** `README.md` in this tree documents the corresponding `README.md` under `piecemint/`.
 
 ## Excluded (by design)
 

@@ -1,6 +1,6 @@
 # Plugin marketplace page
 
-**Source file:** `financeflow/frontend/src/pages/Marketplace.tsx`
+**Source file:** `piecemint/frontend/src/pages/Marketplace.tsx`
 
 ## Overview
 

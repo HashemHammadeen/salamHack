@@ -1,6 +1,6 @@
 # TypeScript project references (root)
 
-**Source file:** `financeflow/frontend/tsconfig.json`
+**Source file:** `piecemint/frontend/tsconfig.json`
 
 ## Overview
 

@@ -234,7 +234,7 @@ def delete_smtp_config(tenant_id: TenantId):
 
 class TestEmailBody(BaseModel):
     to: EmailStr
-    subject: str | None = "FinanceFlow — test email"
+    subject: str | None = "Piecemint — test email"
     text: str | None = None
 
 
@@ -251,9 +251,9 @@ def send_test_email(tenant_id: TenantId, body: TestEmailBody):
         raise HTTPException(status_code=503, detail="No SMTP password: save one in the form or set FF_SMTP_PASSWORD.")
 
     text = (body.text or "").strip() or (
-        "This is a test from FinanceFlow. If you received this, SMTP is set up."
+        "This is a test from Piecemint. If you received this, SMTP is set up."
     )
-    subj = (body.subject or "FinanceFlow — test email").strip()
+    subj = (body.subject or "Piecemint — test email").strip()
 
     msg = EmailMessage()
     msg["Subject"] = subj

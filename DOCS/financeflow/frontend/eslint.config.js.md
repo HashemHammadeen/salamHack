@@ -1,6 +1,6 @@
 # ESLint flat config
 
-**Source file:** `financeflow/frontend/eslint.config.js`
+**Source file:** `piecemint/frontend/eslint.config.js`
 
 ## Overview
 

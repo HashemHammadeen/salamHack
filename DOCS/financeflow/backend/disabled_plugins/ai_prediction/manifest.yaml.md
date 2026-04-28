@@ -1,6 +1,6 @@
 # Plugin: AI prediction (manifest, disabled copy)
 
-**Source file:** `financeflow/backend/disabled_plugins/ai_prediction/manifest.yaml`
+**Source file:** `piecemint/backend/disabled_plugins/ai_prediction/manifest.yaml`
 
 ## Overview
 

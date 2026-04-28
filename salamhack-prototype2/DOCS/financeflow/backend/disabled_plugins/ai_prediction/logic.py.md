@@ -1,6 +1,6 @@
 # Plugin: AI cashflow forecast (optional / disabled copy)
 
-**Source file:** `financeflow/backend/disabled_plugins/ai_prediction/logic.py`
+**Source file:** `piecemint/backend/disabled_plugins/ai_prediction/logic.py`
 
 ## Overview
 

@@ -1,6 +1,6 @@
 # TypeScript config for application source
 
-**Source file:** `financeflow/frontend/tsconfig.app.json`
+**Source file:** `piecemint/frontend/tsconfig.app.json`
 
 ## Overview
 

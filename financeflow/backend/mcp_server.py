@@ -1,8 +1,8 @@
 """
-FinanceFlow MCP server — stdio transport, shares the same SQLite DB as FastAPI.
+Piecemint MCP server — stdio transport, shares the same SQLite DB as FastAPI.
 
 Run (from repo / Cursor MCP config):
-  cd financeflow/backend && source venv/bin/activate && python mcp_server.py
+  cd piecemint/backend && source venv/bin/activate && python mcp_server.py
 
 Tools scope to the single built-in org; the `tenant` argument accepts id, legacy ids
 (tenant_a, tenant_b), or the org display name.
@@ -37,8 +37,8 @@ finally:
     _db0.close()
 
 mcp = FastMCP(
-    "FinanceFlow",
-    instructions="Read and modify FinanceFlow data (single org). list_tenants returns the org id and name. Tool `tenant` args accept id, legacy names, or org display name.",
+    "Piecemint",
+    instructions="Read and modify Piecemint data (single org). list_tenants returns the org id and name. Tool `tenant` args accept id, legacy names, or org display name.",
 )
 
 

@@ -1,6 +1,6 @@
 # Component-scoped default styles (Vite template)
 
-**Source file:** `financeflow/frontend/src/App.css`
+**Source file:** `piecemint/frontend/src/App.css`
 
 ## Overview
 

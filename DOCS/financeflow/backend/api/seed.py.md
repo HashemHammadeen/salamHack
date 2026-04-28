@@ -1,6 +1,6 @@
 # Initial data seed (idempotent)
 
-**Source file:** `financeflow/backend/api/seed.py`
+**Source file:** `piecemint/backend/api/seed.py`
 
 ## Overview
 

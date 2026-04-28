@@ -1,6 +1,6 @@
 # Main dashboard page
 
-**Source file:** `financeflow/frontend/src/pages/Dashboard.tsx`
+**Source file:** `piecemint/frontend/src/pages/Dashboard.tsx`
 
 ## Overview
 

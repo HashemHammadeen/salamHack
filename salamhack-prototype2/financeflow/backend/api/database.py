@@ -3,8 +3,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 _ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-_DEFAULT_DB = "sqlite:///" + os.path.join(_ROOT, "financeflow.db")
-DATABASE_URL = os.environ.get("FINANCEFLOW_DATABASE_URL", _DEFAULT_DB)
+_DEFAULT_DB = "sqlite:///" + os.path.join(_ROOT, "piecemint.db")
+DATABASE_URL = os.environ.get("PIECEMINT_DATABASE_URL", _DEFAULT_DB)
 
 
 class Base(DeclarativeBase):

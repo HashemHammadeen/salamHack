@@ -1,4 +1,4 @@
-/** Base URL for the FinanceFlow API (paths like `core/...`, `dev/...` are appended). */
+/** Base URL for the Piecemint API (paths like `core/...`, `dev/...` are appended). */
 // Vite injects import.meta.env at build time; fall back for local dev.
 const viteUrl = import.meta.env.VITE_API_URL;
 export const API_BASE: string =

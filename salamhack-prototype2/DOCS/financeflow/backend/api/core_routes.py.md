@@ -1,6 +1,6 @@
 # Core REST API (tenant-scoped)
 
-**Source file:** `financeflow/backend/api/core_routes.py`
+**Source file:** `piecemint/backend/api/core_routes.py`
 
 ## Overview
 

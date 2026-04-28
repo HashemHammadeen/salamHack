@@ -172,7 +172,7 @@ export default function AppLayout() {
     <div className="min-h-screen flex flex-col bg-canvas-cream">
       <header className="sticky top-0 z-40 min-h-[4.5rem] shrink-0 border-b border-ink-black/10 bg-white/90 backdrop-blur-md">
         <div className="flex h-full min-h-[4.5rem] items-center justify-between gap-4 px-4 py-4 md:px-8 max-w-[1600px] mx-auto w-full">
-          <div className="font-bold text-xl tracking-tighter text-ink-black">FinanceFlow</div>
+          <div className="font-bold text-xl tracking-tighter text-ink-black">Piecemint<span className="text-signal-orange text-2xl leading-none">.</span></div>
           <div className="flex items-center gap-3 md:gap-4">
             <button
               type="button"

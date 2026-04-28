@@ -1,6 +1,6 @@
 # React bootstrap
 
-**Source file:** `financeflow/frontend/src/main.tsx`
+**Source file:** `piecemint/frontend/src/main.tsx`
 
 ## Overview
 

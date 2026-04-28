@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
-"""One-off generator: creates DOCS/financeflow/**/<name>.md for each mapped source file."""
+"""One-off generator: creates DOCS/piecemint/**/<name>.md for each mapped source file."""
 from __future__ import annotations
 
 import os
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-DOCS = os.path.join(ROOT, "financeflow")
+DOCS = os.path.join(ROOT, "piecemint")
 
-# relpath under financeflow/ -> (title, sections as list of str)
+# relpath under piecemint/ -> (title, sections as list of str)
 SPECS: dict[str, tuple[str, list[str]]] = {
     "backend/api/__init__.py": (
         "Package marker: `api`",
         [
-            "Marks `api` as a Python package so imports like `from api.main import app` resolve when the backend working directory is `financeflow/backend`.",
+            "Marks `api` as a Python package so imports like `from api.main import app` resolve when the backend working directory is `piecemint/backend`.",
             "No runtime logic; safe to leave minimal or empty.",
         ],
     ),
@@ -22,7 +22,7 @@ SPECS: dict[str, tuple[str, list[str]]] = {
             "Creates the `FastAPI` app, registers CORS, runs **lifespan**: `init_db()` + `ensure_seed_data()` on startup.",
             "Loads **PluginManager**: discovers `plugins/*/`, registers each plugin router under `/api/plugins`.",
             "Mounts **core_router** (`/api/core/*`) and defines `GET /` and `GET /api/plugins` (installed vs available plugin metadata).",
-            "Run with: `uvicorn api.main:app` from `financeflow/backend`.",
+            "Run with: `uvicorn api.main:app` from `piecemint/backend`.",
         ],
     ),
     "backend/api/core_routes.py": (
@@ -39,7 +39,7 @@ SPECS: dict[str, tuple[str, list[str]]] = {
         "SQLAlchemy engine and session factory",
         [
             "Defines SQLAlchemy **`Base`**, **`engine`**, and **`SessionLocal`**.",
-            "Default DB: SQLite at `financeflow/backend/financeflow.db` unless `FINANCEFLOW_DATABASE_URL` is set.",
+            "Default DB: SQLite at `piecemint/backend/piecemint.db` unless `PIECEMINT_DATABASE_URL` is set.",
             "**`get_db()`** is a FastAPI dependency generator yielding a session (close in `finally`).",
             "**`init_db()`** imports `api.db_models` (to register tables) and runs `Base.metadata.create_all(bind=engine)`.",
         ],
@@ -107,7 +107,7 @@ SPECS: dict[str, tuple[str, list[str]]] = {
             "Uses **`mcp.server.fastmcp.FastMCP`** with **`mcp.run()`** (stdio transport) for Cursor/Claude Desktop style hosts.",
             "Shares the same SQLite file as the FastAPI app via **`api.database`**.",
             "Tools: **`list_tenants`**, **`get_clients`**, **`get_stockholders`**, **`add_stockholder`**, **`list_transactions`**—resolve tenant by id or name.",
-            "Entry: `python mcp_server.py` from `financeflow/backend` (with venv activated).",
+            "Entry: `python mcp_server.py` from `piecemint/backend` (with venv activated).",
         ],
     ),
     "backend/requirements.txt": (
@@ -193,15 +193,15 @@ SPECS: dict[str, tuple[str, list[str]]] = {
     "frontend/README.md": (
         "Create Vite + React template README (upstream)",
         [
-            "This file in `financeflow/frontend/` is the default Vite React-TS README from the scaffold (dev commands, Vite links).",
-            "For FinanceFlow-specific architecture, see `DOCS/financeflow/README.md` and the per-file `*.md` files in this tree.",
+            "This file in `piecemint/frontend/` is the default Vite React-TS README from the scaffold (dev commands, Vite links).",
+            "For Piecemint-specific architecture, see `DOCS/piecemint/README.md` and the per-file `*.md` files in this tree.",
         ],
     ),
     "frontend/vite.config.ts": (
         "Vite configuration",
         [
             "Registers **`@vitejs/plugin-react`** and **`@tailwindcss/vite`** for Tailwind 4 single-file CSS pipeline.",
-            "Standard `defineConfig` export for the FinanceFlow frontend build.",
+            "Standard `defineConfig` export for the Piecemint frontend build.",
         ],
     ),
     "frontend/tsconfig.json": (
@@ -225,7 +225,7 @@ SPECS: dict[str, tuple[str, list[str]]] = {
     "frontend/tailwind.config.js": (
         "Tailwind theme extension (v3-style file; v4 may also use CSS `@theme`)",
         [
-            "Extends `theme` with FinanceFlow color tokens: canvas cream, lifted cream, ink black, signal orange, etc.",
+            "Extends `theme` with Piecemint color tokens: canvas cream, lifted cream, ink black, signal orange, etc.",
             "If using Tailwind v4 with `@import \"tailwindcss\"` in CSS, this file may be partially redundant; kept for editor/tooling compatibility in some setups.",
         ],
     ),
@@ -308,7 +308,7 @@ def main() -> None:
         lines = [
             f"# {title}",
             "",
-            f"**Source file:** `financeflow/{rel}`",
+            f"**Source file:** `piecemint/{rel}`",
             "",
             "## Overview",
             "",
@@ -321,18 +321,18 @@ def main() -> None:
             f.write(body)
         print("wrote", out)
 
-    # Index README in DOCS/financeflow
+    # Index README in DOCS/piecemint
     index_path = os.path.join(DOCS, "README.md")
     with open(index_path, "w", encoding="utf-8") as f:
         f.write(
-            """# FinanceFlow documentation mirror
+            """# Piecemint documentation mirror
 
-This folder mirrors the `financeflow/` project tree. For each **source file** in the repo, a documentation file here explains that file’s role.
+This folder mirrors the `piecemint/` project tree. For each **source file** in the repo, a documentation file here explains that file’s role.
 
 ## Naming
 
 - Doc files are named **`<original-filename>.md`** (for example `main.py.md`, `Dashboard.tsx.md`) so names stay unique in folders that contain both `App.css` and `App.tsx`.
-- **Exception:** `README.md` in this tree documents the corresponding `README.md` under `financeflow/`.
+- **Exception:** `README.md` in this tree documents the corresponding `README.md` under `piecemint/`.
 
 ## Excluded (by design)
 

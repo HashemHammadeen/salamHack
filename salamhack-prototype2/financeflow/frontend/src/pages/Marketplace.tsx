@@ -72,7 +72,7 @@ export default function Marketplace() {
       <section>
         <h1 className="mb-4 text-3xl md:text-4xl font-medium tracking-tight">Plugin marketplace</h1>
         <p className="text-lg text-ink-black/80 max-w-2xl">
-          Extend FinanceFlow with specialized modules. Use the switch to enable or disable each plugin
+          Extend Piecemint with specialized modules. Use the switch to enable or disable each plugin
           for this app. Install by moving a folder into{' '}
           <code className="text-sm bg-ink-black/5 px-2 py-0.5 rounded-lg">plugins/</code> on the
           server, then refresh this list.

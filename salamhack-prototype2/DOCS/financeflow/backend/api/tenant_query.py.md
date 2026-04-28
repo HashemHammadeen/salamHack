@@ -1,6 +1,6 @@
 # Tenant resolution for MCP and scripts
 
-**Source file:** `financeflow/backend/api/tenant_query.py`
+**Source file:** `piecemint/backend/api/tenant_query.py`
 
 ## Overview
 

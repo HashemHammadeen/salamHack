@@ -1,6 +1,6 @@
 # Plugin: keyword-based expense search
 
-**Source file:** `financeflow/backend/plugins/expense_categorizer/logic.py`
+**Source file:** `piecemint/backend/plugins/expense_categorizer/logic.py`
 
 ## Overview
 

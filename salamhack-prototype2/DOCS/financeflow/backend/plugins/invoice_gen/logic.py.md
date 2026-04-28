@@ -1,6 +1,6 @@
 # Plugin: PDF invoice generation
 
-**Source file:** `financeflow/backend/plugins/invoice_gen/logic.py`
+**Source file:** `piecemint/backend/plugins/invoice_gen/logic.py`
 
 ## Overview
 

@@ -1,6 +1,6 @@
 # npm package manifest (frontend)
 
-**Source file:** `financeflow/frontend/package.json`
+**Source file:** `piecemint/frontend/package.json`
 
 ## Overview
 

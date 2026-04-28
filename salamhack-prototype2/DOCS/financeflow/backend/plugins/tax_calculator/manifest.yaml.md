@@ -1,6 +1,6 @@
 # Plugin: tax calculator (manifest)
 
-**Source file:** `financeflow/backend/plugins/tax_calculator/manifest.yaml`
+**Source file:** `piecemint/backend/plugins/tax_calculator/manifest.yaml`
 
 ## Overview
 

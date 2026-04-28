@@ -13,7 +13,7 @@ export default function ForDevelopers() {
           <div>
             <h1 className="text-[48px] leading-none tracking-tight mb-4">Build your own plugin</h1>
             <p className="text-ink-black/70 text-lg">
-              How FinanceFlow discovers modules under <code className="text-sm bg-ink-black/5 px-1.5 py-0.5 rounded">plugins/</code> and
+              How Piecemint discovers modules under <code className="text-sm bg-ink-black/5 px-1.5 py-0.5 rounded">plugins/</code> and
               exposes them in the app.
             </p>
           </div>
@@ -34,7 +34,7 @@ export default function ForDevelopers() {
         <h2 className="text-xl font-medium tracking-tight">1. Folder layout</h2>
         <p className="text-ink-black/80">
           Each plugin is a directory next to the backend code, for example{' '}
-          <code className="text-sm bg-ink-black/5 px-1.5 py-0.5 rounded">financeflow/backend/plugins/my_plugin/</code>.
+          <code className="text-sm bg-ink-black/5 px-1.5 py-0.5 rounded">piecemint/backend/plugins/my_plugin/</code>.
           Two files are required:
         </p>
         <ul className="list-disc pl-6 space-y-2 text-ink-black/80">
@@ -79,7 +79,7 @@ def hello():
         </pre>
         <p className="text-ink-black/70 text-sm">
           You can use shared app modules (e.g. database) by importing from the backend package the same way existing
-          plugins do; keep imports stable when you upgrade FinanceFlow.
+          plugins do; keep imports stable when you upgrade Piecemint.
         </p>
       </section>
 

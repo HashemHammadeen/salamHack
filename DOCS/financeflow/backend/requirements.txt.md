@@ -1,6 +1,6 @@
 # Python dependencies (backend)
 
-**Source file:** `financeflow/backend/requirements.txt`
+**Source file:** `piecemint/backend/requirements.txt`
 
 ## Overview
 

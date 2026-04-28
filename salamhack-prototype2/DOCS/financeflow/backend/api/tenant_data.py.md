@@ -1,6 +1,6 @@
 # Read model for plugins (dict compatibility)
 
-**Source file:** `financeflow/backend/api/tenant_data.py`
+**Source file:** `piecemint/backend/api/tenant_data.py`
 
 ## Overview
 

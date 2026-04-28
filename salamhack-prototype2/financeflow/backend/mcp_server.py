@@ -1,8 +1,8 @@
 """
-FinanceFlow MCP server — stdio transport, shares the same SQLite DB as FastAPI.
+Piecemint MCP server — stdio transport, shares the same SQLite DB as FastAPI.
 
 Run (from repo / Cursor MCP config):
-  cd financeflow/backend && source venv/bin/activate && python mcp_server.py
+  cd piecemint/backend && source venv/bin/activate && python mcp_server.py
 
 Tools scope to the single built-in org; the `tenant` argument accepts id, legacy ids
 (tenant_a, tenant_b), or the org display name.
@@ -31,7 +31,7 @@ from api.seed import ensure_seed_data
 from api.tenant_query import resolve_tenant_id
 
 # Parse CLI flags early so we can set host/port on the FastMCP constructor
-_parser = argparse.ArgumentParser(description="FinanceFlow MCP server")
+_parser = argparse.ArgumentParser(description="Piecemint MCP server")
 _parser.add_argument("--sse", action="store_true", help="Run with SSE transport (legacy)")
 _parser.add_argument("--remote", action="store_true", help="Run with streamable-http transport (for Claude.ai cloud)")
 _parser.add_argument("--port", type=int, default=8001, help="Port for remote modes (default: 8001)")
@@ -48,8 +48,8 @@ finally:
     _db0.close()
 
 mcp = FastMCP(
-    "FinanceFlow",
-    instructions="Read and modify FinanceFlow data (single org). list_tenants returns the org id and name. Tool `tenant` args accept id, legacy names, or org display name.",
+    "Piecemint",
+    instructions="Read and modify Piecemint data (single org). list_tenants returns the org id and name. Tool `tenant` args accept id, legacy names, or org display name.",
     host="0.0.0.0" if _is_remote else "127.0.0.1",
     port=_args.port,
     # For streamable-http: serve at root so Claude.ai finds it at /
@@ -197,11 +197,11 @@ def list_transactions(tenant: str, limit: int = 50) -> str:
 
 if __name__ == "__main__":
     if _args.remote:
-        print(f"Starting FinanceFlow MCP server (streamable-http) on http://0.0.0.0:{_args.port}")
+        print(f"Starting Piecemint MCP server (streamable-http) on http://0.0.0.0:{_args.port}")
         print(f"Claude.ai connector URL: https://<your-ngrok-url>/mcp")
         mcp.run(transport="streamable-http")
     elif _args.sse:
-        print(f"Starting FinanceFlow MCP server (SSE) on http://0.0.0.0:{_args.port}")
+        print(f"Starting Piecemint MCP server (SSE) on http://0.0.0.0:{_args.port}")
         print(f"SSE endpoint: https://<your-ngrok-url>/sse")
         mcp.run(transport="sse")
     else:

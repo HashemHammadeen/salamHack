@@ -1,6 +1,6 @@
 # Dynamic plugin discovery and registration
 
-**Source file:** `financeflow/backend/plugin_manager.py`
+**Source file:** `piecemint/backend/plugin_manager.py`
 
 ## Overview
 

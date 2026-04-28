@@ -1,6 +1,6 @@
 # TypeScript config for Node tooling (Vite config, etc.)
 
-**Source file:** `financeflow/frontend/tsconfig.node.json`
+**Source file:** `piecemint/frontend/tsconfig.node.json`
 
 ## Overview
 

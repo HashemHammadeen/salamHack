@@ -1,6 +1,6 @@
 # Pydantic request/response models
 
-**Source file:** `financeflow/backend/api/models.py`
+**Source file:** `piecemint/backend/api/models.py`
 
 ## Overview
 

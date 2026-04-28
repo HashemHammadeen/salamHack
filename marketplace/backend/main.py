@@ -25,7 +25,7 @@ PLUGINS: List[Plugin] = [
     Plugin(
         id="mcp",
         name="MCP Protocol",
-        description="Connect FinanceFlow directly to Claude for AI-powered data management.",
+        description="Connect Piecemint directly to Claude for AI-powered data management.",
         price="Free",
         is_free=True
     ),

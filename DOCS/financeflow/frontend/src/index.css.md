@@ -1,6 +1,6 @@
 # Global styles and design system base
 
-**Source file:** `financeflow/frontend/src/index.css`
+**Source file:** `piecemint/frontend/src/index.css`
 
 ## Overview
 

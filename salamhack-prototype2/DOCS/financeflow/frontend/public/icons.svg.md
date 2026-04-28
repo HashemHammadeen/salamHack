@@ -1,6 +1,6 @@
 # Sprite or icon set (SVG asset)
 
-**Source file:** `financeflow/frontend/public/icons.svg`
+**Source file:** `piecemint/frontend/public/icons.svg`
 
 ## Overview
 

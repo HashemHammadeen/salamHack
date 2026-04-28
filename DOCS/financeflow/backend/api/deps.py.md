@@ -1,6 +1,6 @@
 # FastAPI dependencies: DB session and tenant header
 
-**Source file:** `financeflow/backend/api/deps.py`
+**Source file:** `piecemint/backend/api/deps.py`
 
 ## Overview
 

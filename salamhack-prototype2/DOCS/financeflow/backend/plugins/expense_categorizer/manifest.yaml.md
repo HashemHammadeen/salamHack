@@ -1,6 +1,6 @@
 # Plugin: Smart Categorizer (manifest)
 
-**Source file:** `financeflow/backend/plugins/expense_categorizer/manifest.yaml`
+**Source file:** `piecemint/backend/plugins/expense_categorizer/manifest.yaml`
 
 ## Overview
 

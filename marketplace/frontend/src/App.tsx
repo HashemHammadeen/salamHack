@@ -84,7 +84,7 @@ function App() {
             isGlobalSearchOpen ? 'opacity-0 -translate-y-4 pointer-events-none' : 'opacity-100 translate-y-0 pointer-events-auto'
           }`}
         >
-          <div className="font-bold text-xl tracking-[-0.02em]">FinanceFlow<span className="text-[var(--color-signal-orange)] text-2xl leading-none">.</span></div>
+          <div className="font-bold text-xl tracking-[-0.02em]">Piecemint<span className="text-[var(--color-signal-orange)] text-2xl leading-none">.</span></div>
           <div className="hidden md:flex gap-14 font-medium text-[16px]">
             <button 
               className={`hover:opacity-70 transition-opacity ${activeTab === 'plugins' ? 'text-[var(--color-signal-orange)]' : ''}`}

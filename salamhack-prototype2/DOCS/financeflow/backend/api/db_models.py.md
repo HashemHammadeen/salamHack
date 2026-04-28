@@ -1,6 +1,6 @@
 # ORM models: multi-tenant tables
 
-**Source file:** `financeflow/backend/api/db_models.py`
+**Source file:** `piecemint/backend/api/db_models.py`
 
 ## Overview
 

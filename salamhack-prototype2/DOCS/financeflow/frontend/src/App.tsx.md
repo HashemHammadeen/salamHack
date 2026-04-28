@@ -1,6 +1,6 @@
 # Root React component: shell and routes
 
-**Source file:** `financeflow/frontend/src/App.tsx`
+**Source file:** `piecemint/frontend/src/App.tsx`
 
 ## Overview
 

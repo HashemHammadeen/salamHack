@@ -8,7 +8,7 @@ from api.tenant_scope import DEFAULT_TENANT_ID
 
 
 def get_tenant_id() -> str:
-    """FinanceFlow is single-organization; always scope to the default org."""
+    """Piecemint is single-organization; always scope to the default org."""
     return DEFAULT_TENANT_ID
 
 

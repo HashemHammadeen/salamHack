@@ -1,5 +1,5 @@
 """
-Centralized CRUD data-access layer for all FinanceFlow entities.
+Centralized CRUD data-access layer for all Piecemint entities.
 
 Routes, scripts, and CLI tools all funnel through this module so
 business logic lives in one place.

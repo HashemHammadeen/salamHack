@@ -1,6 +1,6 @@
 # Favicon (SVG asset)
 
-**Source file:** `financeflow/frontend/public/favicon.svg`
+**Source file:** `piecemint/frontend/public/favicon.svg`
 
 ## Overview
 

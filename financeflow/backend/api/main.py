@@ -21,7 +21,7 @@ async def lifespan(app: FastAPI):
     yield
 
 
-app = FastAPI(title="FinanceFlow API", lifespan=lifespan)
+app = FastAPI(title="Piecemint API", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -41,7 +41,7 @@ app.include_router(dev_router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to FinanceFlow API"}
+    return {"message": "Welcome to Piecemint API"}
 
 
 @app.get("/api/plugins")

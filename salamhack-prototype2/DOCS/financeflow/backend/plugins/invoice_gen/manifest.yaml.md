@@ -1,6 +1,6 @@
 # Plugin: invoice generator (manifest)
 
-**Source file:** `financeflow/backend/plugins/invoice_gen/manifest.yaml`
+**Source file:** `piecemint/backend/plugins/invoice_gen/manifest.yaml`
 
 ## Overview
 

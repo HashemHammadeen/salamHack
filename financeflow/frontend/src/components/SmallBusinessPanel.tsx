@@ -87,7 +87,7 @@ export default function SmallBusinessPanel() {
             <div>
               <h2 className="text-lg font-medium text-ink-black mb-1">How to use this suite</h2>
               <p className="text-sm text-ink-black/70 max-w-3xl">
-                FinanceFlow already includes several building blocks for small businesses (invoicing, tax
+                Piecemint already includes several building blocks for small businesses (invoicing, tax
                 estimates, categorization, budgeting). This page maps each capability to what you can do
                 today and what is on the roadmap—payment links, bank feeds, inventory, and team permissions
                 will land as separate plugin and API work.

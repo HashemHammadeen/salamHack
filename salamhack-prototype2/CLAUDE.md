@@ -1,4 +1,4 @@
-# FinanceFlow — Claude Code Command Center
+# Piecemint — Claude Code Command Center
 
 > React + FastAPI fintech tool with SQLAlchemy/SQLite.  
 > All data operations go through `api/crud.py`.
@@ -9,12 +9,12 @@
 
 ```bash
 # Backend (FastAPI + SQLite)
-cd financeflow/backend
+cd piecemint/backend
 .\venv\Scripts\activate          # Windows venv
 uvicorn api.main:app --reload    # http://localhost:8000
 
 # Frontend (Vite + React)
-cd financeflow/frontend
+cd piecemint/frontend
 npm run dev                      # http://localhost:5173
 ```
 
@@ -28,7 +28,7 @@ npm run dev                      # http://localhost:5173
 | **View/DTO** | `api/models.py`          | Pydantic schemas (Create, Update, Read)      |
 | **Controller**| `api/core_routes.py`    | FastAPI router — thin wrappers over crud     |
 | **CRUD**     | `api/crud.py`            | All data logic (list/get/create/update/delete)|
-| **DB**       | `financeflow.db`         | SQLite single-file database                  |
+| **DB**       | `piecemint.db`         | SQLite single-file database                  |
 | **Seed**     | `api/seed.py`            | Demo data seeder                             |
 
 ---
@@ -37,7 +37,7 @@ npm run dev                      # http://localhost:5173
 
 ```bash
 # Reseed the entire database (wipe + repopulate demo data)
-cd financeflow/backend
+cd piecemint/backend
 .\venv\Scripts\python -m api.seed --force
 
 # Verify a write roundtrip (create → read → assert → cleanup)
@@ -78,7 +78,7 @@ All endpoints are tenant-scoped (single org `"default"` — no auth required).
 ## File Layout
 
 ```
-financeflow/
+piecemint/
 ├── backend/
 │   ├── api/
 │   │   ├── crud.py            ← CRUD layer (source of truth)
@@ -91,7 +91,7 @@ financeflow/
 │   │   ├── verify_write.py    ← Write verification script
 │   │   └── main.py            ← FastAPI app entry
 │   ├── plugins/               ← Plugin system
-│   ├── financeflow.db         ← SQLite database
+│   ├── piecemint.db         ← SQLite database
 │   └── requirements.txt
 └── frontend/
     ├── src/

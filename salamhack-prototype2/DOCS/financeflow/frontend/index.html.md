@@ -1,6 +1,6 @@
 # Vite HTML shell
 
-**Source file:** `financeflow/frontend/index.html`
+**Source file:** `piecemint/frontend/index.html`
 
 ## Overview
 
