@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend (${{ matrix.product }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        product: [financeflow, marketplace]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ${{ matrix.product }}/frontend/package-lock.json
+
+      - name: Install, build, lint
+        working-directory: ${{ matrix.product }}/frontend
+        run: |
+          npm ci
+          npm run build
+          npm run lint
+
+      - name: Upload dist (main only)
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.product }}-frontend-dist
+          path: ${{ matrix.product }}/frontend/dist
+          if-no-files-found: error
+
+  backend:
+    name: Backend (${{ matrix.product }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - product: financeflow
+            workdir: financeflow/backend
+            install: pip install -r requirements.txt
+            verify: PYTHONPATH=. python -c "from api.main import app; assert app.title == 'Piecemint API'"
+          - product: marketplace
+            workdir: marketplace/backend
+            install: pip install "fastapi>=0.115" "uvicorn[standard]>=0.32" "pydantic>=2"
+            verify: python -c "import main; assert main.app.title == 'MarketPlace API'"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.workdir }}
+        run: ${{ matrix.install }}
+
+      - name: Smoke import
+        working-directory: ${{ matrix.workdir }}
+        run: ${{ matrix.verify }}

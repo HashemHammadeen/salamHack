@@ -594,64 +594,73 @@ function LedgerSection({
 
   return (
     <div className="card p-5 md:p-6 space-y-4">
-      <h2 className="text-lg font-medium">This month: one-time entries &amp; log</h2>
-      <p className="text-sm text-ink-black/50">
-        Dated inflows and outflows for {ym} roll into the totals and category mix. Newest first.
-      </p>
-      <div className="flex flex-col lg:flex-row flex-wrap gap-2 items-end">
-        <label className="text-xs font-medium text-ink-black/60 block w-full sm:w-24">
-          Type
-          <select
-            className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 bg-white text-sm"
-            value={form.type}
-            onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as 'income' | 'expense' }))}
+      <header className="space-y-1">
+        <h2 className="text-lg font-medium">This month: one-time entries &amp; log</h2>
+        <p className="text-sm text-ink-black/55 max-w-3xl">
+          Dated inflows and outflows for {ym} roll into the totals and category mix. Newest first.
+        </p>
+      </header>
+
+      <div className="rounded-2xl border border-ink-black/10 bg-ink-black/[0.02] p-4 md:p-5 space-y-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-12 lg:gap-x-4 lg:gap-y-3 lg:items-end">
+          <label className="text-xs font-medium text-ink-black/60 block sm:col-span-1 lg:col-span-2">
+            Type
+            <select
+              className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 bg-white text-sm"
+              value={form.type}
+              onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as 'income' | 'expense' }))}
+            >
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </label>
+          <label
+            className={`text-xs font-medium text-ink-black/60 block sm:col-span-2 ${form.type === 'expense' ? 'lg:col-span-4' : 'lg:col-span-6'}`}
           >
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-        </label>
-        <label className="text-xs font-medium text-ink-black/60 block flex-1 min-w-[120px]">
-          Label
-          <input
-            className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 text-sm"
-            value={form.label}
-            onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
-            placeholder="Bonus, one-off, …"
-          />
-        </label>
-        <label className="text-xs font-medium text-ink-black/60 block w-full sm:w-28">
-          Amount
-          <input
-            type="number"
-            min={0}
-            className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 text-sm"
-            value={form.amount}
-            onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
-          />
-        </label>
-        <label className="text-xs font-medium text-ink-black/60 block w-full sm:w-40">
-          Date
-          <input
-            type="date"
-            className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 text-sm"
-            value={form.date}
-            onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-          />
-        </label>
-        {form.type === 'expense' && (
-          <label className="text-xs font-medium text-ink-black/60 block flex-1 min-w-[100px]">
-            Category
+            Label
             <input
               className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 text-sm"
-              value={form.category}
-              onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+              value={form.label}
+              onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
+              placeholder="Bonus, one-off, …"
             />
           </label>
-        )}
-        <button type="button" onClick={add} className="pill-button text-sm w-full lg:w-auto inline-flex items-center gap-1">
-          <Plus size={16} />
-          Log entry
-        </button>
+          <label className="text-xs font-medium text-ink-black/60 block sm:col-span-1 lg:col-span-2">
+            Amount
+            <input
+              type="number"
+              min={0}
+              className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 text-sm tabular-nums"
+              value={form.amount}
+              onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
+            />
+          </label>
+          <label className="text-xs font-medium text-ink-black/60 block sm:col-span-1 lg:col-span-2">
+            Date
+            <input
+              type="date"
+              className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 text-sm"
+              value={form.date}
+              onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
+            />
+          </label>
+          {form.type === 'expense' && (
+            <label className="text-xs font-medium text-ink-black/60 block sm:col-span-2 lg:col-span-2">
+              Category
+              <input
+                className="mt-1 w-full border border-ink-black/20 rounded-xl px-3 py-2 text-sm"
+                value={form.category}
+                onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+              />
+            </label>
+          )}
+        </div>
+        <div className="flex flex-col sm:flex-row sm:justify-end pt-1">
+          <button type="button" onClick={add} className="pill-button text-sm w-full sm:w-auto inline-flex items-center justify-center gap-1.5 min-h-11 px-5">
+            <Plus size={16} aria-hidden />
+            Log entry
+          </button>
+        </div>
       </div>
 
       <ul className="space-y-2" aria-label="Recent entries" role="list">
