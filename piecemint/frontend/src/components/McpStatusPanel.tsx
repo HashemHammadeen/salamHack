@@ -17,8 +17,8 @@ export default function McpStatusPanel() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    // In local dev, MCP runs on port 8002. In prod, you'd likely use an env var.
-    const mcpUrl = import.meta.env.VITE_MCP_URL || 'http://localhost:8002/api/mcp/status';
+    // In local dev, MCP runs on port 8002. In prod, Vite injects a relative path.
+    const mcpUrl = import.meta.env.VITE_MCP_URL || '/api/mcp/status';
     
     fetch(mcpUrl)
       .then(res => res.json())
@@ -57,7 +57,7 @@ export default function McpStatusPanel() {
           <AlertCircle size={20} />
           <h3 className="font-medium">MCP Server Offline</h3>
         </div>
-        <p className="text-sm text-ink-black/60">Ensure your MCP backend is running (port 8002 locally).</p>
+        <p className="text-sm text-ink-black/60">Ensure your Piecemint Unified Server is running.</p>
       </div>
     );
   }

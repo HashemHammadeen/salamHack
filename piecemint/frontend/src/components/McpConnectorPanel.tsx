@@ -32,7 +32,7 @@ export default function McpConnectorPanel() {
   const [refreshing, setRefreshing] = useState(false);
 
   const mcpUrl =
-    import.meta.env.VITE_MCP_URL || 'http://localhost:8002/api/mcp/status';
+    import.meta.env.VITE_MCP_URL || '/api/mcp/status';
 
   const fetchStatus = async () => {
     try {
@@ -93,14 +93,14 @@ export default function McpConnectorPanel() {
           </div>
           <div className="bg-white/80 rounded-xl p-5 border border-ink-black/10 space-y-3">
             <p className="text-sm text-ink-black/75 leading-relaxed">
-              Make sure the MCP backend is running. In local development, start
-              it with:
+              Make sure the Piecemint Unified Server is running.
+              In local development, start it with:
             </p>
             <code className="block text-xs bg-ink-black/5 px-4 py-3 rounded-lg font-mono text-ink-black/80">
-              python -m uvicorn mcp_server:mcp --port 8002
+              python -m uvicorn unified_app:app --port 10000
             </code>
             <p className="text-xs text-ink-black/50">
-              In production (Railway), the Procfile handles this automatically.
+              In production (Render/Railway), the MCP server runs automatically alongside the app.
             </p>
           </div>
           <button

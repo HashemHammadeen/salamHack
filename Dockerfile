@@ -17,9 +17,10 @@ RUN cd marketplace/frontend && npm ci
 COPY piecemint/frontend/ ./piecemint/frontend/
 COPY marketplace/frontend/ ./marketplace/frontend/
 
-# Build piecemint frontend — set relative API path
+# Build piecemint frontend — set relative API path and MCP status URL
 ENV VITE_API_URL=/api
 ENV VITE_MARKETPLACE_URL=/market
+ENV VITE_MCP_URL=/api/mcp/status
 RUN cd piecemint/frontend && npm run build
 
 # Build marketplace frontend — set empty API URL so it uses relative paths
