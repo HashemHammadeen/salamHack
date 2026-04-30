@@ -458,38 +458,51 @@ _piecemint_dist = _BACKEND_ROOT / "dist" / "piecemint-frontend"
 _marketplace_dist = _BACKEND_ROOT / "dist" / "marketplace-frontend"
 
 if _piecemint_dist.is_dir() and _marketplace_dist.is_dir():
-    # Serve static assets for Piecemint SPA
-    app.mount("/_piecemint_static", StaticFiles(directory=str(_piecemint_dist)), name="piecemint_static")
-
-    # Serve static assets for Marketplace SPA
-    app.mount("/_market_static", StaticFiles(directory=str(_marketplace_dist)), name="market_static")
 
     @app.get("/{path:path}")
-    async def piecemint_spa(path: str):
-        # Let API, MCP, marketplace, and marketplace-api routes through
-        if path.startswith("api/") or path.startswith("mcp") or path.startswith("market/api/"):
+    async def spa_fallback(path: str):
+        # Let API and MCP routes through
+        if path.startswith("api/") or path.startswith("mcp"):
             raise HTTPException(status_code=404, detail="Not found")
-        if path.startswith("market"):
-            index_file = _marketplace_dist / "index.html"
-            if index_file.exists():
-                return FileResponse(str(index_file))
-            raise HTTPException(status_code=500, detail="marketplace index.html not found")
-        # Default: Piecemint SPA
-        index_file = _piecemint_dist / "index.html"
-        if index_file.exists():
-            return FileResponse(str(index_file))
-        raise HTTPException(status_code=500, detail="index.html not found")
+
+        # Marketplace SPA — base is '/market/'
+        if path.startswith("market/"):
+            rel = path[len("market/"):]
+            if rel:
+                market_file = _marketplace_dist / rel
+                if market_file.is_file():
+                    return FileResponse(str(market_file))
+            idx = _marketplace_dist / "index.html"
+            if idx.exists():
+                return FileResponse(str(idx))
+            raise HTTPException(status_code=404)
+
+        # Piecemint SPA
+        # First try serving actual static files (assets, icons, etc.)
+        piecemint_file = _piecemint_dist / path
+        if piecemint_file.is_file():
+            return FileResponse(str(piecemint_file))
+
+        # Fall back to index.html for SPA routing
+        idx = _piecemint_dist / "index.html"
+        if idx.exists():
+            return FileResponse(str(idx))
+        raise HTTPException(status_code=404)
+
 elif _piecemint_dist.is_dir():
-    app.mount("/_piecemint_static", StaticFiles(directory=str(_piecemint_dist)), name="piecemint_static")
 
     @app.get("/{path:path}")
-    async def piecemint_spa(path: str):
-        if path.startswith("api/") or path.startswith("mcp") or path.startswith("market"):
+    async def spa_fallback(path: str):
+        if path.startswith("api/") or path.startswith("mcp"):
             raise HTTPException(status_code=404, detail="Not found")
-        index_file = _piecemint_dist / "index.html"
-        if index_file.exists():
-            return FileResponse(str(index_file))
-        raise HTTPException(status_code=500, detail="index.html not found")
+        piecemint_file = _piecemint_dist / path
+        if piecemint_file.is_file():
+            return FileResponse(str(piecemint_file))
+        idx = _piecemint_dist / "index.html"
+        if idx.exists():
+            return FileResponse(str(idx))
+        raise HTTPException(status_code=404)
+
 else:
     @app.get("/")
     def piecemint_fallback():
