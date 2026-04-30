@@ -431,7 +431,9 @@ app.mount("/mcp", mcp_core.streamable_http_app())
 @app.get("/api/mcp/status")
 async def mcp_status(request: Request):
     api_key = os.environ.get("MCP_API_KEY", "")
-    base_url = str(request.base_url).rstrip("/")
+    proto = request.headers.get("X-Forwarded-Proto", request.url.scheme)
+    host = request.headers.get("X-Forwarded-Host", request.url.netloc)
+    base_url = f"{proto}://{host}"
     url = f"{base_url}/mcp"
     claude_url = f"{base_url}/mcp?api_key={api_key}" if api_key else url
     tool_list = []
@@ -453,17 +455,45 @@ async def mcp_status(request: Request):
 
 # --- Static file serving (built frontends) ---
 _piecemint_dist = _BACKEND_ROOT / "dist" / "piecemint-frontend"
-if _piecemint_dist.is_dir():
-    app.mount("/", StaticFiles(directory=str(_piecemint_dist), html=True), name="piecemint")
+_marketplace_dist = _BACKEND_ROOT / "dist" / "marketplace-frontend"
+
+if _piecemint_dist.is_dir() and _marketplace_dist.is_dir():
+    # Serve static assets for Piecemint SPA
+    app.mount("/_piecemint_static", StaticFiles(directory=str(_piecemint_dist)), name="piecemint_static")
+
+    # Serve static assets for Marketplace SPA
+    app.mount("/_market_static", StaticFiles(directory=str(_marketplace_dist)), name="market_static")
+
+    @app.get("/{path:path}")
+    async def piecemint_spa(path: str):
+        # Let API, MCP, marketplace, and marketplace-api routes through
+        if path.startswith("api/") or path.startswith("mcp") or path.startswith("market/api/"):
+            raise HTTPException(status_code=404, detail="Not found")
+        if path.startswith("market"):
+            index_file = _marketplace_dist / "index.html"
+            if index_file.exists():
+                return FileResponse(str(index_file))
+            raise HTTPException(status_code=500, detail="marketplace index.html not found")
+        # Default: Piecemint SPA
+        index_file = _piecemint_dist / "index.html"
+        if index_file.exists():
+            return FileResponse(str(index_file))
+        raise HTTPException(status_code=500, detail="index.html not found")
+elif _piecemint_dist.is_dir():
+    app.mount("/_piecemint_static", StaticFiles(directory=str(_piecemint_dist)), name="piecemint_static")
+
+    @app.get("/{path:path}")
+    async def piecemint_spa(path: str):
+        if path.startswith("api/") or path.startswith("mcp") or path.startswith("market"):
+            raise HTTPException(status_code=404, detail="Not found")
+        index_file = _piecemint_dist / "index.html"
+        if index_file.exists():
+            return FileResponse(str(index_file))
+        raise HTTPException(status_code=500, detail="index.html not found")
 else:
     @app.get("/")
     def piecemint_fallback():
         return {"message": "Piecemint API running. Build the frontend for the UI."}
-
-
-_marketplace_dist = _BACKEND_ROOT / "dist" / "marketplace-frontend"
-if _marketplace_dist.is_dir():
-    app.mount("/market", StaticFiles(directory=str(_marketplace_dist), html=True), name="marketplace")
 
 # ---------------------------------------------------------------------------
 # Startup message

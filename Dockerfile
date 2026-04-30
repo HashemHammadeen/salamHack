@@ -17,8 +17,14 @@ RUN cd marketplace/frontend && npm ci
 COPY piecemint/frontend/ ./piecemint/frontend/
 COPY marketplace/frontend/ ./marketplace/frontend/
 
-# Build both
+# Build piecemint frontend — set relative API path
+ENV VITE_API_URL=/api
+ENV VITE_MARKETPLACE_URL=/market
 RUN cd piecemint/frontend && npm run build
+
+# Build marketplace frontend — set empty API URL so it uses relative paths
+ENV VITE_MARKETPLACE_API_URL=
+ENV VITE_MAIN_APP_URL=/
 RUN cd marketplace/frontend && npm run build
 
 # ============================================================
