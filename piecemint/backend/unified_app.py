@@ -423,8 +423,8 @@ async def mcp_auth(request: Request, call_next):
     return await call_next(request)
 
 
-# --- MCP server mount ---
-app.mount("/mcp", mcp_core.streamable_http_app())
+# --- MCP server mount (SSE transport for Claude Cloud compatibility) ---
+app.mount("/mcp", mcp_core.sse_app(mount_path="/mcp"))
 
 
 # --- MCP status endpoint ---
@@ -435,7 +435,9 @@ async def mcp_status(request: Request):
     host = request.headers.get("X-Forwarded-Host", request.url.netloc)
     base_url = f"{proto}://{host}"
     url = f"{base_url}/mcp"
-    claude_url = f"{base_url}/mcp?api_key={api_key}" if api_key else url
+    # SSE transport: Claude connects to the SSE endpoint
+    query_auth = f"?api_key={api_key}" if api_key else ""
+    claude_url = f"{base_url}/mcp{query_auth}"
     tool_list = []
     try:
         tools = await mcp_core.list_tools()
@@ -449,6 +451,7 @@ async def mcp_status(request: Request):
         "auth_type": "api_key",
         "api_key": api_key,
         "claude_url": claude_url,
+        "transport": "sse",
         "tools": tool_list,
     }
 

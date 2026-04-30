@@ -20,6 +20,7 @@ type McpStatus = {
   auth_type: string;
   api_key: string;
   claude_url: string;
+  transport: string;
   tools: McpTool[];
 };
 
@@ -201,7 +202,7 @@ export default function McpConnectorPanel() {
             <div className="rounded-xl bg-ink-black/[0.03] border border-ink-black/8 p-4">
               <p className="text-xs text-ink-black/50 mb-1">Transport</p>
               <p className="text-sm font-medium text-ink-black">
-                Streamable HTTP
+                {status.transport === 'sse' ? 'SSE (Server-Sent Events)' : 'Streamable HTTP'}
               </p>
             </div>
             <div className="rounded-xl bg-ink-black/[0.03] border border-ink-black/8 p-4">

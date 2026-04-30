@@ -7,6 +7,7 @@ type McpStatus = {
   auth_type: string;
   api_key: string;
   claude_url: string;
+  transport: string;
   tools: { name: string; description: string }[];
 };
 
