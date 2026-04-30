@@ -23,8 +23,8 @@ ENV VITE_MARKETPLACE_URL=/market
 ENV VITE_MCP_URL=/api/mcp/status
 RUN cd piecemint/frontend && npm run build
 
-# Build marketplace frontend — set empty API URL so it uses relative paths
-ENV VITE_MARKETPLACE_API_URL=
+# Build marketplace frontend — point API calls to /market prefix
+ENV VITE_MARKETPLACE_API_URL=/market
 ENV VITE_MAIN_APP_URL=/
 RUN cd marketplace/frontend && npm run build
 
