@@ -1,0 +1,8 @@
+name: "MCP Connector"
+description: "Connect your AI assistant natively to Piecemint. Installs the Model Context Protocol (MCP) server endpoints."
+version: "1.0.0"
+author: "FinanceFlow"
+
+marketplace:
+  price: "Free"
+  is_free: true

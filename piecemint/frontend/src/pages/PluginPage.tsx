@@ -21,6 +21,7 @@ import StockholdersPanel from '../components/StockholdersPanel';
 import EmailNotificationsPanel from '../components/EmailNotificationsPanel';
 import WebNotificationsPanel from '../components/WebNotificationsPanel';
 import SmallBusinessPanel from '../components/SmallBusinessPanel';
+import McpConnectorPanel from '../components/McpConnectorPanel';
 
 export default function PluginPage() {
   const { pluginId = '' } = useParams();
@@ -133,6 +134,8 @@ export default function PluginPage() {
 
       {pluginId === 'small_business' && <SmallBusinessPanel />}
 
+      {pluginId === 'mcp_connector' && <McpConnectorPanel />}
+
       {pluginId === 'invoice_gen' && (
         <div className="space-y-8">
           <section className="card p-6 md:p-8">
@@ -243,7 +246,7 @@ export default function PluginPage() {
         </section>
       )}
 
-      {!['tax_calculator', 'invoice_gen', 'expense_categorizer', 'ai_prediction', 'stockholders', 'email_notifications', 'web_notifications', 'small_business'].includes(
+      {!['tax_calculator', 'invoice_gen', 'expense_categorizer', 'ai_prediction', 'stockholders', 'email_notifications', 'web_notifications', 'small_business', 'mcp_connector'].includes(
         pluginId
       ) && (
         <section className="card p-6 text-ink-black/80 text-sm">

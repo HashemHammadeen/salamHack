@@ -13,6 +13,10 @@ from __future__ import annotations
 import json
 import os
 import sys
+import importlib.util
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import contextmanager
 
 # Ensure `api` package is importable when run as a script
@@ -43,7 +47,7 @@ try:
 finally:
     _db0.close()
 
-mcp = FastMCP(
+mcp_core = FastMCP(
     "Piecemint",
     instructions="Read and modify Piecemint data (single org). list_tenants returns the org id and name. Tool `tenant` args accept id, legacy names, or org display name. Email: send_email (plain text) and send_invoice_email (PDF/XLSX/DOCX attachment) use the same SMTP as the app (Email notifications / FF_SMTP_*).",
 )
@@ -62,7 +66,7 @@ def session_scope() -> Session:
         s.close()
 
 
-@mcp.tool()
+@mcp_core.tool()
 def list_tenants() -> str:
     """List all tenant ids and display names in the database."""
     with session_scope() as db:
@@ -71,7 +75,7 @@ def list_tenants() -> str:
     return json.dumps(data, indent=2)
 
 
-@mcp.tool()
+@mcp_core.tool()
 def get_clients(tenant: str) -> str:
     """List clients. `tenant` may be org id, legacy id (tenant_a / tenant_b), or display name."""
     with session_scope() as db:
@@ -96,7 +100,7 @@ def get_clients(tenant: str) -> str:
     return json.dumps(out, indent=2)
 
 
-@mcp.tool()
+@mcp_core.tool()
 def get_stockholders(tenant: str) -> str:
     """List stockholders for a tenant (by id or name)."""
     with session_scope() as db:
@@ -122,7 +126,7 @@ def get_stockholders(tenant: str) -> str:
     return json.dumps(out, indent=2)
 
 
-@mcp.tool()
+@mcp_core.tool()
 def add_stockholder(
     tenant: str,
     name: str,
@@ -158,7 +162,7 @@ def add_stockholder(
     return json.dumps({"ok": True, "stockholder": row}, indent=2)
 
 
-@mcp.tool()
+@mcp_core.tool()
 def list_transactions(tenant: str, limit: int = 50) -> str:
     """Recent transactions for a tenant (by id or name)."""
     with session_scope() as db:
@@ -191,7 +195,7 @@ def _split_recipients(to_field: str) -> list[str]:
     return [x.strip() for x in to_field.replace(";", ",").split(",") if x.strip()]
 
 
-@mcp.tool()
+@mcp_core.tool()
 def send_email(tenant: str, to: str, subject: str, text_body: str) -> str:
     """
     Send a plain-text email using the same SMTP settings as the app (Email notifications plugin or FF_SMTP_*).
@@ -218,7 +222,7 @@ def send_email(tenant: str, to: str, subject: str, text_body: str) -> str:
     return json.dumps({"ok": True, "to": addrs, "subject": subject.strip() or "(no subject)"}, indent=2)
 
 
-@mcp.tool()
+@mcp_core.tool()
 def send_invoice_email(
     tenant: str,
     client_id: str,
@@ -308,5 +312,88 @@ def send_invoice_email(
     )
 
 
+
+def load_plugins():
+    plugins_dir = os.path.join(_BACKEND_ROOT, "plugins")
+    if not os.path.isdir(plugins_dir):
+        return
+    for entry in os.scandir(plugins_dir):
+        if entry.is_dir():
+            mcp_tools_path = os.path.join(entry.path, "mcp_tools.py")
+            if os.path.isfile(mcp_tools_path):
+                spec = importlib.util.spec_from_file_location(f"plugins.{entry.name}.mcp_tools", mcp_tools_path)
+                if spec and spec.loader:
+                    module = importlib.util.module_from_spec(spec)
+                    sys.modules[f"plugins.{entry.name}.mcp_tools"] = module
+                    spec.loader.exec_module(module)
+                    if hasattr(module, "register_mcp_tools"):
+                        module.register_mcp_tools(mcp_core, session_scope, resolve_tenant_id, db_models)
+
+load_plugins()
+
+mcp = FastAPI(title="Piecemint MCP")
+
+mcp.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@mcp.middleware("http")
+async def mcp_auth(request: Request, call_next):
+    if request.url.path.startswith("/mcp"):
+        api_key = os.environ.get("MCP_API_KEY", "")
+        if api_key:
+            auth_header = request.headers.get("Authorization", "")
+            query_key = request.query_params.get("api_key", "")
+            
+            provided_key = None
+            if auth_header.startswith("Bearer "):
+                provided_key = auth_header.split(" ")[1]
+            elif query_key:
+                provided_key = query_key
+                
+            if provided_key != api_key:
+                return JSONResponse(status_code=401, content={"error": "Unauthorized"})
+
+    return await call_next(request)
+
+@mcp.get("/api/mcp/status")
+async def mcp_status(request: Request):
+    api_key = os.environ.get("MCP_API_KEY", "")
+    base_url = str(request.base_url).rstrip("/")
+    url = f"{base_url}/mcp"
+    claude_url = f"{base_url}/mcp?api_key={api_key}" if api_key else url
+    
+    # Attempt to list tools from FastMCP internals
+    tool_list = []
+    try:
+        tools = await mcp_core.list_tools()
+        for t in tools:
+            tool_list.append({"name": t.name, "description": getattr(t, "description", "")})
+    except Exception:
+        tool_list = [{"name": "tools_loaded", "description": "Tools active but could not be enumerated."}]
+        
+    return {
+        "running": True,
+        "url": url,
+        "auth_type": "api_key",
+        "api_key": api_key,
+        "claude_url": claude_url,
+        "tools": tool_list
+    }
+
+mcp.mount("/mcp", mcp_core.streamable_http_app())
+
+@mcp.on_event("startup")
+def print_startup():
+    port = os.environ.get("PORT", "8000")
+    print("MCP Server running at:")
+    print(f"- Bearer auth: http://0.0.0.0:{port}/mcp")
+    print(f"- Query auth (Claude Web): http://0.0.0.0:{port}/mcp?api_key=<key>")
+
 if __name__ == "__main__":
-    mcp.run()
+    import uvicorn
+    uvicorn.run("mcp_server:mcp", host="0.0.0.0", port=int(os.environ.get("PORT", 8000)), reload=True)

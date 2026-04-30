@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  piecemint-mcp:
+    build:
+      context: ./piecemint/backend
+      dockerfile: Dockerfile
+    ports:
+      - "8002:8000"
+    environment:
+      - PORT=8000
+      - PIECEMINT_DATABASE_URL=sqlite:////data/piecemint.db
+      - MCP_API_KEY=${MCP_API_KEY:-local-dev-key}
+      - FF_SMTP_HOST=${FF_SMTP_HOST}
+      - FF_SMTP_PORT=${FF_SMTP_PORT}
+      - FF_SMTP_USER=${FF_SMTP_USER}
+      - FF_SMTP_PASSWORD=${FF_SMTP_PASSWORD}
+      - FF_SMTP_FROM=${FF_SMTP_FROM}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    volumes:
+      - piecemint-data:/data
+
+volumes:
+  piecemint-data:

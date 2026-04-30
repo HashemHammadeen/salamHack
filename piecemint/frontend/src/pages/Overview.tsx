@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, TrendingUp, TrendingDown, Activity } from 'lucide-react';
 import { useFinanceData } from '../context/FinanceDataContext';
 import { buildChartSeries } from '../lib/financeCharts';
+import McpStatusPanel from '../components/McpStatusPanel';
 
 export default function Overview() {
   const { transactions, taxReserve, plugins, isPluginActive, isPluginEnabled } = useFinanceData();
@@ -212,6 +213,7 @@ export default function Overview() {
             </ul>
           )}
         </div>
+        <McpStatusPanel />
       </section>
     </div>
   );
