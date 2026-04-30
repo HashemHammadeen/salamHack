@@ -423,8 +423,8 @@ async def mcp_auth(request: Request, call_next):
     return await call_next(request)
 
 
-# --- MCP server mount (SSE transport for Claude Cloud compatibility) ---
-app.mount("/mcp", mcp_core.sse_app(mount_path="/mcp"))
+# --- MCP server mount (SSE transport for Claude Desktop compatibility) ---
+app.mount("/mcp", mcp_core.sse_app())
 
 
 # --- MCP status endpoint ---
@@ -469,7 +469,7 @@ if _piecemint_dist.is_dir() and _marketplace_dist.is_dir():
             raise HTTPException(status_code=404, detail="Not found")
 
         # Marketplace SPA — base is '/market/'
-        if path.startswith("market/"):
+        if path == "market" or path.startswith("market/"):
             rel = path[len("market/"):]
             if rel:
                 market_file = _marketplace_dist / rel
