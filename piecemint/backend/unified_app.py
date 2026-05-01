@@ -424,10 +424,128 @@ async def mcp_auth(request: Request, call_next):
     return await call_next(request)
 
 
-# --- MCP server mount (Streamable HTTP for Cursor compatibility) ---
-# Insert at the beginning of the route list so it takes priority over the SPA catch-all
-mcp_app = mcp_core.streamable_http_app()
-app.router.routes.insert(0, Mount("/mcp", app=mcp_app))
+# --- MCP server (Streamable HTTP for Cursor compatibility) ---
+# Direct implementation using FastMCP's public API
+from starlette.responses import JSONResponse, Response
+
+@app.api_route("/mcp", methods=["GET", "POST", "DELETE", "OPTIONS"])
+async def mcp_endpoint(request: Request):
+    """Handle MCP Streamable HTTP protocol directly."""
+    # Check auth
+    api_key = os.environ.get("MCP_API_KEY", "")
+    if api_key:
+        auth_header = request.headers.get("Authorization", "")
+        query_key = request.query_params.get("api_key")
+        
+        if auth_header.startswith("Bearer "):
+            if auth_header[7:] != api_key and query_key != api_key:
+                return JSONResponse({"jsonrpc": "2.0", "error": {"code": -32000, "message": "Unauthorized"}, "id": None}, status_code=401)
+        elif query_key != api_key:
+            return JSONResponse({"jsonrpc": "2.0", "error": {"code": -32000, "message": "Unauthorized"}, "id": None}, status_code=401)
+    
+    if request.method == "DELETE":
+        return Response(status_code=200)
+    
+    if request.method == "GET":
+        # Return basic info for GET requests
+        return JSONResponse({
+            "jsonrpc": "2.0",
+            "result": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {"tools": {"listChanged": True}},
+                "serverInfo": {"name": mcp_core.name, "version": "1.0.0"}
+            }
+        })
+    
+    if request.method == "POST":
+        body = await request.body()
+        try:
+            import json
+            raw = json.loads(body)
+        except json.JSONDecodeError:
+            return JSONResponse({"jsonrpc": "2.0", "error": {"code": -32700, "message": "Parse error"}, "id": None}, status_code=400)
+        
+        # Handle initialize
+        if isinstance(raw, dict) and raw.get("method") == "initialize":
+            response_data = {
+                "jsonrpc": "2.0",
+                "result": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {
+                        "tools": {"listChanged": True},
+                        "resources": {},
+                        "prompts": {}
+                    },
+                    "serverInfo": {
+                        "name": mcp_core.name,
+                        "version": "1.0.0"
+                    }
+                },
+                "id": raw.get("id")
+            }
+            return JSONResponse(response_data)
+        
+        # Handle tools/list
+        if isinstance(raw, dict) and raw.get("method") == "tools/list":
+            tools = await mcp_core.list_tools()
+            tools_json = []
+            for tool in tools:
+                tools_json.append({
+                    "name": tool.name,
+                    "description": tool.description or "",
+                    "inputSchema": tool.inputSchema
+                })
+            response_data = {
+                "jsonrpc": "2.0",
+                "result": {"tools": tools_json},
+                "id": raw.get("id")
+            }
+            return JSONResponse(response_data)
+        
+        # Handle tools/call
+        if isinstance(raw, dict) and raw.get("method") == "tools/call":
+            tool_name = raw.get("params", {}).get("name")
+            tool_args = raw.get("params", {}).get("arguments", {})
+            
+            try:
+                result = await mcp_core.call_tool(tool_name, tool_args)
+                # Format result for JSON-RPC
+                if hasattr(result, '__iter__') and not isinstance(result, (str, dict)):
+                    content = []
+                    for item in result:
+                        if hasattr(item, 'model_dump'):
+                            content.append(item.model_dump())
+                        else:
+                            content.append(str(item))
+                else:
+                    content = [{"type": "text", "text": str(result)}]
+                
+                response_data = {
+                    "jsonrpc": "2.0",
+                    "result": {
+                        "content": content,
+                        "isError": False
+                    },
+                    "id": raw.get("id")
+                }
+                return JSONResponse(response_data)
+            except Exception as e:
+                response_data = {
+                    "jsonrpc": "2.0",
+                    "error": {"code": -32603, "message": str(e)},
+                    "id": raw.get("id")
+                }
+                return JSONResponse(response_data, status_code=500)
+        
+        # Unknown method
+        return JSONResponse({
+            "jsonrpc": "2.0",
+            "error": {"code": -32601, "message": f"Method not found: {raw.get('method')}"},
+            "id": raw.get("id")
+        }, status_code=404)
+    
+    return Response(status_code=405)
+
 
 
 # --- MCP status endpoint ---

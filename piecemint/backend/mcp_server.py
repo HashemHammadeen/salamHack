@@ -341,25 +341,6 @@ mcp.add_middleware(
     allow_headers=["*"],
 )
 
-@mcp.middleware("http")
-async def mcp_auth(request: Request, call_next):
-    if request.url.path.startswith("/mcp"):
-        api_key = os.environ.get("MCP_API_KEY", "")
-        if api_key:
-            auth_header = request.headers.get("Authorization", "")
-            query_key = request.query_params.get("api_key", "")
-            
-            provided_key = None
-            if auth_header.startswith("Bearer "):
-                provided_key = auth_header.split(" ")[1]
-            elif query_key:
-                provided_key = query_key
-                
-            if provided_key != api_key:
-                return JSONResponse(status_code=401, content={"error": "Unauthorized"})
-
-    return await call_next(request)
-
 @mcp.get("/api/mcp/status")
 async def mcp_status(request: Request):
     api_key = os.environ.get("MCP_API_KEY", "")
@@ -385,15 +366,152 @@ async def mcp_status(request: Request):
         "tools": tool_list
     }
 
-mcp.mount("/mcp", mcp_core.streamable_http_app())
+# --- MCP endpoint: Streamable HTTP handler ---
+from starlette.responses import JSONResponse as _JC, Response as _R, StreamingResponse as _SR
+import uuid as _uuid
+
+# Store active sessions (minimal for HTTP stateless mode)
+_mcp_sessions: dict[str, bool] = {}
+
+@mcp.api_route("/mcp", methods=["GET", "POST", "DELETE", "OPTIONS"])
+async def mcp_endpoint(request: Request):
+    api_key = os.environ.get("MCP_API_KEY", "")
+    if api_key:
+        auth = request.headers.get("Authorization", "")
+        qkey = request.query_params.get("api_key", "")
+        if auth.startswith("Bearer ") and auth[7:] != api_key and qkey != api_key:
+            return _JC({"error": "Unauthorized"}, status_code=401)
+        if not auth.startswith("Bearer ") and qkey != api_key:
+            return _JC({"error": "Unauthorized"}, status_code=401)
+
+    if request.method == "OPTIONS":
+        return _R(status_code=200, headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Content-Type, Authorization, Mcp-Session-Id",
+        })
+
+    if request.method == "DELETE":
+        session_id = request.headers.get("Mcp-Session-Id")
+        if session_id and session_id in _mcp_sessions:
+            del _mcp_sessions[session_id]
+        return _R(status_code=200)
+
+    if request.method == "GET":
+        session_id = request.headers.get("Mcp-Session-Id")
+        if not session_id or session_id not in _mcp_sessions:
+            return _R(status_code=400)
+        async def event_stream():
+            import asyncio
+            while True:
+                yield "event: keepalive\ndata: {}\n\n"
+                await asyncio.sleep(30)
+        return _SR(event_stream(), media_type="text/event-stream")
+
+    if request.method == "POST":
+        body = await request.body()
+        import json
+        try:
+            raw = json.loads(body)
+        except json.JSONDecodeError:
+            return _JC({"jsonrpc": "2.0", "error": {"code": -32700, "message": "Parse error"}, "id": None}, status_code=400)
+
+        # Handle JSON-RPC notifications (no id) — accept silently
+        if isinstance(raw, dict) and "id" not in raw:
+            return _R(status_code=202)
+
+        # Handle batch requests
+        if isinstance(raw, list):
+            results = []
+            for msg in raw:
+                resp = await _handle_single_request(msg)
+                if resp is not None:
+                    body, _ = resp if isinstance(resp, tuple) else (resp, {})
+                    if body is not None:
+                        results.append(body)
+            return _JC(results)
+
+        result = await _handle_single_request(raw)
+        if result is None:
+            return _R(status_code=202)
+        body, extra_headers = result if isinstance(result, tuple) else (result, {})
+        headers = {}
+        if extra_headers:
+            headers.update(extra_headers)
+        headers["Access-Control-Allow-Origin"] = "*"
+        return _JC(body, headers=headers)
+
+    return _R(status_code=405)
+
+async def _handle_single_request(raw: dict):
+    """Handle a single JSON-RPC request/response."""
+    if not isinstance(raw, dict):
+        return None
+
+    has_id = "id" in raw
+    method = raw.get("method", "")
+
+    # Initialize — generate session ID
+    if method == "initialize":
+        session_id = str(_uuid.uuid4())
+        _mcp_sessions[session_id] = True
+        resp = {
+            "jsonrpc": "2.0",
+            "result": {
+                "protocolVersion": "2024-11-05",
+                "capabilities": {"tools": {"listChanged": True}, "resources": {}, "prompts": {}},
+                "serverInfo": {"name": mcp_core.name, "version": "1.0.0"}
+            },
+            "id": raw.get("id")
+        }
+        return resp, {"Mcp-Session-Id": session_id}
+
+    # resources/list — return empty (we only have tools)
+    if method == "resources/list":
+        return {"jsonrpc": "2.0", "result": {"resources": []}, "id": raw.get("id")}, {}
+
+    # prompts/list — return empty (we only have tools)
+    if method == "prompts/list":
+        return {"jsonrpc": "2.0", "result": {"prompts": []}, "id": raw.get("id")}, {}
+
+    # ping — respond to request, ignore notification
+    if method == "ping":
+        if has_id:
+            return {"jsonrpc": "2.0", "result": {}, "id": raw.get("id")}, {}
+        return None
+
+    if method == "tools/list":
+        tools = await mcp_core.list_tools()
+        tools_json = [{"name": t.name, "description": t.description or "", "inputSchema": t.inputSchema} for t in tools]
+        return {"jsonrpc": "2.0", "result": {"tools": tools_json}, "id": raw.get("id")}, {}
+
+    if method == "tools/call":
+        tool_name = raw.get("params", {}).get("name")
+        tool_args = raw.get("params", {}).get("arguments", {})
+        try:
+            result = await mcp_core.call_tool(tool_name, tool_args)
+            content = []
+            if hasattr(result, '__iter__') and not isinstance(result, (str, dict)):
+                for item in result:
+                    content.append(item.model_dump() if hasattr(item, 'model_dump') else {"type": "text", "text": str(item)})
+            else:
+                content = [{"type": "text", "text": str(result)}]
+            return {"jsonrpc": "2.0", "result": {"content": content, "isError": False}, "id": raw.get("id")}, {}
+        except Exception as e:
+            return {"jsonrpc": "2.0", "error": {"code": -32603, "message": str(e)}, "id": raw.get("id")}, {}
+
+    # Unknown method — return error only if it has an id
+    if has_id:
+        return {"jsonrpc": "2.0", "error": {"code": -32601, "message": f"Method not found: {method}"}, "id": raw.get("id")}, {}
+    return None
 
 @mcp.on_event("startup")
 def print_startup():
-    port = os.environ.get("PORT", "8000")
+    port = os.environ.get("PORT", "8005")
     print("MCP Server running at:")
     print(f"- Bearer auth: http://0.0.0.0:{port}/mcp")
     print(f"- Query auth (Claude Web): http://0.0.0.0:{port}/mcp?api_key=<key>")
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("mcp_server:mcp", host="0.0.0.0", port=int(os.environ.get("PORT", 8000)), reload=True)
+    uvicorn.run("mcp_server:mcp", host="0.0.0.0", port=int(os.environ.get("PORT", 8005)), reload=True)
