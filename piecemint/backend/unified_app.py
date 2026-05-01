@@ -24,6 +24,7 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
+from starlette.routing import Mount
 
 # ---------------------------------------------------------------------------
 # Path setup — repo root is two levels up from this file
@@ -424,7 +425,9 @@ async def mcp_auth(request: Request, call_next):
 
 
 # --- MCP server mount (Streamable HTTP for Cursor compatibility) ---
-app.mount("/mcp", mcp_core.streamable_http_app())
+# Insert at the beginning of the route list so it takes priority over the SPA catch-all
+mcp_app = mcp_core.streamable_http_app()
+app.router.routes.insert(0, Mount("/mcp", app=mcp_app))
 
 
 # --- MCP status endpoint ---
