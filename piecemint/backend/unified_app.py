@@ -423,8 +423,8 @@ async def mcp_auth(request: Request, call_next):
     return await call_next(request)
 
 
-# --- MCP server mount (SSE transport for Claude Desktop compatibility) ---
-app.mount("/mcp", mcp_core.sse_app())
+# --- MCP server mount (Streamable HTTP for Cursor compatibility) ---
+app.mount("/mcp", mcp_core.streamable_http_app())
 
 
 # --- MCP status endpoint ---
